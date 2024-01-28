@@ -74,16 +74,6 @@ tree is folded or expanded."
   :type '(repeat (cons (string :tag "Folded")
                        (string :tag "Expanded"))))
 
-(defcustom org-modern-line-spacing nil
-  "Values over 0.0 will add space below all lines by default.
-This uses `default-text-properties' so that it may be overridden."
-  :type 'float)
-
-(defcustom org-modern-line-height nil
-  "Values over 1.0 will add space above all lines by default.
-This uses `default-text-properties' so that it may be overridden."
-  :type 'float)
-
 (defcustom org-modern-hide-stars 'leading
   "Changes the displays of the stars.
 Can be leading, t, or a string/character replacement for each
@@ -94,6 +84,16 @@ leading star.  Set to nil to disable."
           (const :tag "Do not hide stars" nil)
           (const :tag "Hide all stars" t)
           (const :tag "Hide leading stars" leading)))
+
+(defcustom org-modern-headline-line-spacing nil
+  "Values over 0.0 create space below headlines.
+This can also override a buffer-wide setting for line-spacing."
+  :type 'float)
+
+(defcustom org-modern-headline-line-height nil
+  "Values over 1.0 create space over headlines.
+This can also override a buffer-wide setting for line-height."
+  :type 'float)
 
 (defcustom org-modern-timestamp t
   "Prettify time stamps, e.g. <2022-03-01>.
@@ -797,6 +797,10 @@ whole buffer; otherwise, for the line at point."
      `((,(concat "^[ \t]*#\\+\\(?:filetags\\|FILETAGS\\):\\( +\\)\\(:\\(?:"
                  org-tag-re ":\\)+\\)[ \t]*$")
         (0 (org-modern--tag)))))
+   (when (or org-modern-headline-line-spacing org-modern-headline-line-height)
+     `(("^\\(?:\\*+ .*\\)\\(\n+\\)"
+        (1 '(face nil line-spacing ,org-modern-headline-line-spacing) t)
+        (1 '(face nil line-height ,org-modern-headline-line-height) t))))
    (when org-modern-keyword
      `(("^[ \t]*\\(#\\+\\)\\([^: \t\n]+\\):"
         ,@(pcase org-modern-keyword
